@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:expense_tracker_app/app/add_expense/model.dart';
 import 'package:expense_tracker_app/app/categories/view.dart';
@@ -12,6 +11,7 @@ import 'package:expense_tracker_app/framework/widgets/base/app_alert.dart';
 import 'package:expense_tracker_app/framework/widgets/base/app_appbar.dart';
 import 'package:expense_tracker_app/framework/widgets/base/app_button.dart';
 import 'package:expense_tracker_app/framework/widgets/base/app_field_preview.dart';
+import 'package:expense_tracker_app/framework/widgets/base/app_input_currency.dart';
 import 'package:expense_tracker_app/framework/widgets/base/app_input_text.dart';
 
 class AddExpenseView extends StatefulWidget {
@@ -129,20 +129,11 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                   Expanded(
                     child: ListView(
                       children: [
-                        AppInputText(
+                        AppInputCurrency(
                           label: 'Monto',
-                          value: _viewModel.amountDraft,
+                          valueCents: _viewModel.amountCents,
                           errorText: _viewModel.amountError,
-                          hint: '0.00',
                           focusNode: _amountFocus,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.]'),
-                            ),
-                          ],
                           onChanged: _viewModel.setAmount,
                         ),
                         AppTheme.SPACE_VERTICAL_2x,

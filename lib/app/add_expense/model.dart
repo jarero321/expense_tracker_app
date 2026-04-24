@@ -1,32 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:expense_tracker_app/app/manager/app_manager.dart';
-import 'package:expense_tracker_app/framework/utils/currency.dart';
 import 'package:expense_tracker_app/framework/utils/database.dart';
 
 class AddExpenseViewModel extends ChangeNotifier {
-  static const String amountEmptyError = 'Ingresa el monto';
-  static const String amountInvalidError = 'Monto no válido';
-  static const String amountZeroError = 'El monto debe ser mayor a cero';
+  static const String amountZeroError = 'Ingresa un monto mayor a cero';
   static const String categoryEmptyError = 'Selecciona una categoría';
   static const String dateEmptyError = 'Selecciona la fecha';
   static const String noteLongError = 'Máximo 80 caracteres';
 
-  static String validateAmount(String raw) {
-    if (raw.trim().isEmpty) return amountEmptyError;
-    final cents = AppCurrency.parseToCents(raw);
-    if (cents == null) return amountInvalidError;
-    if (cents == 0) return amountZeroError;
-    return '';
-  }
+  static String validateAmount(int cents) =>
+      cents <= 0 ? amountZeroError : '';
 
-  static String validateNote(String raw) {
-    if (raw.length > 80) return noteLongError;
-    return '';
-  }
+  static String validateNote(String raw) =>
+      raw.length > 80 ? noteLongError : '';
 
   final manager = AppManager();
 
-  String amountDraft = '';
+  int amountCents = 0;
   String noteDraft = '';
   int? categoryIdDraft;
   DateTime? spentAtDraft;
@@ -42,8 +32,8 @@ class AddExpenseViewModel extends ChangeNotifier {
     spentAtDraft = DateTime.now();
   }
 
-  void setAmount(String value) {
-    amountDraft = value;
+  void setAmount(int cents) {
+    amountCents = cents;
     amountError = '';
     notifyListeners();
   }
@@ -67,7 +57,7 @@ class AddExpenseViewModel extends ChangeNotifier {
   }
 
   bool _refreshAllErrors() {
-    amountError = validateAmount(amountDraft);
+    amountError = validateAmount(amountCents);
     noteError = validateNote(noteDraft);
     categoryError = categoryIdDraft == null ? categoryEmptyError : '';
     dateError = spentAtDraft == null ? dateEmptyError : '';
@@ -87,7 +77,7 @@ class AddExpenseViewModel extends ChangeNotifier {
     try {
       final db = await AppDatabase.instance();
       await db.insert('expenses', {
-        'amount_cents': AppCurrency.parseToCents(amountDraft),
+        'amount_cents': amountCents,
         'note': noteDraft.trim(),
         'category_id': categoryIdDraft,
         'spent_at': spentAtDraft!.toIso8601String(),
