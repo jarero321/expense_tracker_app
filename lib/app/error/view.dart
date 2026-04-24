@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:expense_tracker_app/app/home/view.dart';
 import 'package:expense_tracker_app/framework/theme/app.dart';
 import 'package:expense_tracker_app/framework/utils/navigator.dart';
 import 'package:expense_tracker_app/framework/utils/telemetry.dart';
@@ -22,7 +23,7 @@ class _ErrorViewState extends State<ErrorView> {
 
   void retry() {
     Telemetry.trackView(tag, 'button_tap', metadata: {'button_name': 'retry'});
-    AppNavigator.navigateAndReplaceAll(view: const _Bootstrapper());
+    AppNavigator.navigateAndReplaceAll(view: const HomeView());
   }
 
   @override
@@ -65,18 +66,6 @@ class _ErrorViewState extends State<ErrorView> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Bootstrapper extends StatelessWidget {
-  const _Bootstrapper();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppTheme.COLOR_WHITE,
-      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
